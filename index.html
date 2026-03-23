@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>TruthLens — Fake News Detector</title>
+  <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Literata:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+</head>
+<body>
+
+  <!-- ░░ SCREEN 1: LANDING ░░ -->
+  <div id="screen-landing" class="screen active">
+    <div class="grid-bg"></div>
+    <div class="landing-wrap">
+      <div class="eyebrow">Digital Literacy Project</div>
+      <h1>Truth<span class="slash">/</span>Lens</h1>
+      <p class="tagline">10 headlines. Real or fabricated?<br/>Your critical thinking is the only filter.</p>
+
+      <div class="meta-pills">
+        <span class="pill">10 Questions</span>
+        <span class="pill">Instant Feedback</span>
+        <span class="pill">Leaderboard</span>
+      </div>
+
+      <div class="name-section">
+        <label for="player-name">Enter your name to begin</label>
+        <div class="input-row">
+          <input type="text" id="player-name" placeholder="Your name..." maxlength="30" autocomplete="off"/>
+          <button id="start-btn" onclick="startGame()">Start →</button>
+        </div>
+        <p class="input-error hidden" id="name-error">Please enter your name first.</p>
+      </div>
+
+      <div id="mini-leaderboard" class="mini-leaderboard hidden">
+        <span class="mini-lb-title">🏆 Top Players</span>
+        <div id="mini-lb-list"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ░░ SCREEN 2: GAME ░░ -->
+  <div id="screen-game" class="screen">
+    <div class="grid-bg"></div>
+
+    <header class="game-header">
+      <div class="brand-sm">TruthLens</div>
+      <div class="hud">
+        <div class="hud-item">
+          <span class="hud-label">Question</span>
+          <span class="hud-val" id="q-counter">1/10</span>
+        </div>
+        <div class="hud-divider"></div>
+        <div class="hud-item">
+          <span class="hud-label">Score</span>
+          <span class="hud-val" id="hud-score">0</span>
+        </div>
+      </div>
+    </header>
+
+    <div class="progress-track">
+      <div class="progress-fill" id="prog-fill"></div>
+    </div>
+
+    <main class="game-main">
+
+      <!-- Question Card -->
+      <div class="q-card" id="q-card">
+        <div class="q-card-inner">
+          <div class="card-meta">
+            <span class="card-label" id="card-label">HEADLINE</span>
+            <span class="source-tag" id="source-tag">Loading...</span>
+          </div>
+          <blockquote class="headline" id="headline-text">Loading question...</blockquote>
+        </div>
+      </div>
+
+      <!-- Answer Buttons -->
+      <div class="answer-btns" id="answer-btns">
+        <button class="btn-answer btn-real" onclick="submitAnswer('real')">
+          <span class="btn-icon">✓</span>
+          <span class="btn-label">Real</span>
+          <span class="btn-sub">Credible story</span>
+        </button>
+        <button class="btn-answer btn-fake" onclick="submitAnswer('fake')">
+          <span class="btn-icon">✕</span>
+          <span class="btn-label">Fake</span>
+          <span class="btn-sub">Misinformation</span>
+        </button>
+      </div>
+
+      <!-- Feedback Panel -->
+      <div class="feedback-panel hidden" id="feedback-panel">
+        <div class="feedback-verdict" id="fb-verdict">
+          <span id="fb-icon">✅</span>
+          <span id="fb-title">Correct!</span>
+        </div>
+        <p class="feedback-explain" id="fb-explain"></p>
+        <div class="correct-label" id="correct-label"></div>
+        <button class="btn-next" id="btn-next" onclick="nextQuestion()">Next Question →</button>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- ░░ SCREEN 3: RESULTS ░░ -->
+  <div id="screen-results" class="screen">
+    <div class="grid-bg"></div>
+    <div class="results-wrap">
+      <div class="result-top">
+        <div class="trophy" id="trophy-icon">🏆</div>
+        <h2 id="result-heading">Excellent!</h2>
+        <div class="score-ring">
+          <svg viewBox="0 0 120 120">
+            <circle cx="60" cy="60" r="50" class="ring-bg"/>
+            <circle cx="60" cy="60" r="50" class="ring-fill" id="score-ring-fill"/>
+          </svg>
+          <div class="score-ring-text">
+            <span id="final-score-num">0</span>
+            <span class="score-ring-denom">/10</span>
+          </div>
+        </div>
+        <p class="result-msg" id="result-msg"></p>
+      </div>
+
+      <div class="tips-card">
+        <h3>🧠 Spot Misinformation Like a Pro</h3>
+        <div class="tips-grid">
+          <div class="tip"><span>01</span>Check the source — is it a known outlet?</div>
+          <div class="tip"><span>02</span>Look for sensational or emotional language</div>
+          <div class="tip"><span>03</span>Verify with multiple credible news sites</div>
+          <div class="tip"><span>04</span>Check the publication date and author</div>
+          <div class="tip"><span>05</span>Use reverse image search on photos</div>
+          <div class="tip"><span>06</span>Ask: who benefits from this story?</div>
+        </div>
+      </div>
+
+      <div class="result-actions">
+        <button class="btn-primary" onclick="playAgain()">Play Again</button>
+        <button class="btn-outline" onclick="viewLeaderboard()">Leaderboard</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ░░ SCREEN 4: LEADERBOARD ░░ -->
+  <div id="screen-leaderboard" class="screen">
+    <div class="grid-bg"></div>
+    <div class="lb-wrap">
+      <button class="back-btn" onclick="backToResults()">← Back</button>
+      <h2 class="lb-title">Leaderboard</h2>
+      <div class="lb-stats-row" id="lb-stats-row"></div>
+      <div class="lb-table" id="lb-table">
+        <div class="lb-loading">Loading...</div>
+      </div>
+    </div>
+  </div>
+
+  <script src="config.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
